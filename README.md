@@ -295,16 +295,3 @@ python analysis/step10_gpt4o.py
 MIP-BENCH is released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).  
 The underlying lecture materials are the intellectual property of Dr. Ge Wang, Rensselaer Polytechnic Institute, Troy, NY, and are used with explicit permission for research and benchmarking purposes only.
 
----
-
-## Citation
-
-```bibtex
-@inproceedings{mipbench2024,
-  title     = {{MIP-BENCH}: Are Open-Weight Vision-Language Models Reliable
-               for Instructional Grounding in Medical Imaging Presentations?},
-  author    = {Anonymous},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2024}
-}
-```
