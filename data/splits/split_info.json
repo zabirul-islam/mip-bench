@@ -1,0 +1,247 @@
+{
+  "strategy": "stratified_by_lecture_category",
+  "seed": 42,
+  "train_lectures": [
+    2,
+    6,
+    8,
+    10,
+    11,
+    12,
+    13,
+    14,
+    16,
+    17,
+    18,
+    20,
+    22,
+    23
+  ],
+  "val_lectures": [
+    5,
+    7,
+    15,
+    19
+  ],
+  "test_lectures": [
+    1,
+    3,
+    4,
+    9,
+    21
+  ],
+  "split_counts": {
+    "train": 724,
+    "val": 182,
+    "test": 211
+  },
+  "category_map": {
+    "1": {
+      "topic": "Introduction",
+      "category": "fundamentals",
+      "subcategory": "course_overview",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "conceptual",
+      "description": "Course introduction and medical imaging overview"
+    },
+    "2": {
+      "topic": "MatLab I - Basics",
+      "category": "computational",
+      "subcategory": "matlab",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "computational",
+      "description": "MATLAB programming basics for imaging"
+    },
+    "3": {
+      "topic": "System",
+      "category": "signal_theory",
+      "subcategory": "linear_systems",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Linear systems theory fundamentals"
+    },
+    "4": {
+      "topic": "Convolution",
+      "category": "mathematical_foundation",
+      "subcategory": "convolution",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Convolution theory and applications"
+    },
+    "5": {
+      "topic": "Fourier Series",
+      "category": "mathematical_foundation",
+      "subcategory": "fourier",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Fourier series decomposition and analysis"
+    },
+    "6": {
+      "topic": "Fourier Transform",
+      "category": "mathematical_foundation",
+      "subcategory": "fourier",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Continuous Fourier transform theory"
+    },
+    "7": {
+      "topic": "Signal Processing",
+      "category": "signal_theory",
+      "subcategory": "signal_processing",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Signal processing fundamentals"
+    },
+    "8": {
+      "topic": "Discrete FT and FFT",
+      "category": "mathematical_foundation",
+      "subcategory": "fourier",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Discrete Fourier transform and fast FFT algorithms"
+    },
+    "9": {
+      "topic": "MatLab II - Homework",
+      "category": "computational",
+      "subcategory": "matlab",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "computational",
+      "description": "MATLAB signal processing exercises"
+    },
+    "10": {
+      "topic": "Network",
+      "category": "systems_theory",
+      "subcategory": "network_theory",
+      "has_clinical_images": false,
+      "modality": "none",
+      "content_type": "mathematical",
+      "description": "Network and systems theory for imaging"
+    },
+    "11": {
+      "topic": "Quality and Performance",
+      "category": "image_quality",
+      "subcategory": "quality_metrics",
+      "has_clinical_images": true,
+      "modality": "mixed",
+      "content_type": "mixed",
+      "description": "Image quality metrics SNR MTF NPS and performance"
+    },
+    "12": {
+      "topic": "X-ray and Radiography",
+      "category": "imaging_modality",
+      "subcategory": "xray",
+      "has_clinical_images": true,
+      "modality": "xray",
+      "content_type": "mixed",
+      "description": "X-ray physics attenuation and radiography systems"
+    },
+    "13": {
+      "topic": "CT Reconstruction",
+      "category": "imaging_modality",
+      "subcategory": "ct",
+      "has_clinical_images": true,
+      "modality": "ct",
+      "content_type": "mixed",
+      "description": "CT image reconstruction algorithms backprojection"
+    },
+    "14": {
+      "topic": "CT Scanner",
+      "category": "imaging_modality",
+      "subcategory": "ct",
+      "has_clinical_images": true,
+      "modality": "ct",
+      "content_type": "mixed",
+      "description": "CT scanner hardware geometry and acquisition"
+    },
+    "15": {
+      "topic": "MatLab III - CT",
+      "category": "computational",
+      "subcategory": "matlab",
+      "has_clinical_images": true,
+      "modality": "ct",
+      "content_type": "computational",
+      "description": "MATLAB CT reconstruction implementation exercises"
+    },
+    "16": {
+      "topic": "Nuclear Physics",
+      "category": "physics_foundation",
+      "subcategory": "nuclear_physics",
+      "has_clinical_images": false,
+      "modality": "nuclear",
+      "content_type": "conceptual",
+      "description": "Nuclear physics radioactive decay and interactions"
+    },
+    "17": {
+      "topic": "PET and SPECT",
+      "category": "imaging_modality",
+      "subcategory": "nuclear_imaging",
+      "has_clinical_images": true,
+      "modality": "nuclear",
+      "content_type": "mixed",
+      "description": "PET and SPECT imaging systems and reconstruction"
+    },
+    "18": {
+      "topic": "MRI I",
+      "category": "imaging_modality",
+      "subcategory": "mri",
+      "has_clinical_images": true,
+      "modality": "mri",
+      "content_type": "mixed",
+      "description": "MRI physics spin dynamics and signal generation"
+    },
+    "19": {
+      "topic": "MRI II",
+      "category": "imaging_modality",
+      "subcategory": "mri",
+      "has_clinical_images": true,
+      "modality": "mri",
+      "content_type": "mixed",
+      "description": "MRI pulse sequences contrast mechanisms and k-space"
+    },
+    "20": {
+      "topic": "MRI III",
+      "category": "imaging_modality",
+      "subcategory": "mri",
+      "has_clinical_images": true,
+      "modality": "mri",
+      "content_type": "mixed",
+      "description": "Advanced MRI topics artifacts and applications"
+    },
+    "21": {
+      "topic": "Ultrasound I",
+      "category": "imaging_modality",
+      "subcategory": "ultrasound",
+      "has_clinical_images": true,
+      "modality": "ultrasound",
+      "content_type": "mixed",
+      "description": "Ultrasound physics transducers and wave propagation"
+    },
+    "22": {
+      "topic": "Ultrasound II",
+      "category": "imaging_modality",
+      "subcategory": "ultrasound",
+      "has_clinical_images": true,
+      "modality": "ultrasound",
+      "content_type": "mixed",
+      "description": "Ultrasound imaging modes beamforming and applications"
+    },
+    "23": {
+      "topic": "Optical Imaging",
+      "category": "imaging_modality",
+      "subcategory": "optical",
+      "has_clinical_images": false,
+      "modality": "optical",
+      "content_type": "mixed",
+      "description": "Optical imaging methods microscopy and endoscopy"
+    }
+  }
+}
