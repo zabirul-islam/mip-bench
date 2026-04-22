@@ -42,7 +42,7 @@ IGS = 0.40 * CR + 0.35 * RV + 0.25 * SF
 
 where CR = Concept Recall, RV = Relational Validity, SF = Scope Fidelity.
 
-The IGS judge is GPT-4o, operating against fixed extracted ground truth `<C, R, B>` rather than free-form quality rating. IGS is cross-validated against (a) a structurally independent graph-based metric (r = 0.41–0.54) and (b) pooled judgments of three independent human annotators (r = 0.729 on overall IGS, 88% of slides agreeing within 0.2).
+The default IGS judge is GPT-4o, operating against fixed extracted ground truth `<C, R, B>` rather than free-form quality rating. IGS is cross-validated against (a) a structurally independent graph-based metric (r = 0.41–0.54), (b) pooled judgments of three independent human annotators (r = 0.729 on overall IGS, 88% of slides agreeing within 0.2), and (c) a second non-OpenAI LLM judge (Anthropic `claude-opus-4-6`) with per-model Pearson r_IGS ∈ [0.694, 0.835] and **identical cross-provider model ordering** (Kendall τ = 1.0).
 
 ---
 
@@ -59,6 +59,26 @@ The IGS judge is GPT-4o, operating against fixed extracted ground truth `<C, R, 
 
 No VLM exceeds IGS = 0.642. Every VLM exhibits a universal **scope–concept gap**: SF consistently exceeds CR by +0.10 to +0.14, revealing implicit topic classification rather than explicit concept grounding. Pooled human annotators show no such gap (SF − CR = −0.006), confirming the pattern is a property of current VLMs rather than a rubric artifact.
 
+### Two-Judge Ensemble (Claude + GPT-4o)
+
+Identical rubric re-run with Anthropic `claude-opus-4-6` on the same 183 clean test slides. Model rankings are **identical** across providers (Kendall τ = 1.0, p = 0.017).
+
+| Model | r_IGS (GPT vs Claude) | MAD | Ensemble IGS | 95% CI |
+|---|---:|---:|---:|---|
+| Qwen2-VL-7B | 0.767 | 0.133 | 0.614 | [0.581, 0.646] |
+| InternVL2-40B | 0.835 | 0.119 | 0.594 | [0.560, 0.628] |
+| InternVL2-26B | 0.736 | 0.148 | 0.573 | [0.541, 0.606] |
+| InternVL2-8B | 0.788 | 0.129 | 0.571 | [0.537, 0.603] |
+| LLaVA-1.6-34B | 0.694 | 0.168 | 0.457 | [0.425, 0.488] |
+
+Claude is uniformly ~0.05–0.09 IGS points stricter than GPT-4o on absolute level; ordering is preserved. Compare models **within a fixed judge**. See paper §4.2 and Appendix `sec:supp_multi_judge`.
+
+### Robustness Probes (reviewer-facing)
+
+- **Recall-perturbation sweep** (`analysis/step15_recall_perturbation.py`): simulated 10/20/30 % gold-concept drop; rank Spearman ρ̄ = 0.94, max flip = 1.
+- **Judge-family bias ablation** (`analysis/step17_judge_bias_ablation.py`): OLS Δβ = β_C − β_N ∈ [−0.69, +0.63]; judge does not preferentially reward GPT-4o-extractor vocabulary.
+- **Pipeline transfer probe** (`evaluation/step18_transfer_probe.py`): extraction pipeline runs unchanged on a non-medical corpus (existence proof, no IGS reported).
+
 ---
 
 ## Repository Structure
@@ -71,15 +91,30 @@ mip-bench/                              ← this GitHub repo (code only)
 │   ├── step3_gpt4o.py                  # Step 1: GPT-4o concept graph extraction
 │   ├── step4_vlm_inference.py          # Step 2: VLM inference (image-only, zero-shot)
 │   ├── step5_gpt4o_judge.py            # Step 3: GPT-4o judge → IGS scores
+│   ├── step5_claude_judge.py           # Step 3b: Claude (opus-4-6) judge → IGS scores
 │   ├── step6_v4.py                     # Step 4: baseline metrics (BLEU, ROUGE, BERTScore)
-│   └── step7_v4.py                     # Step 5: human study validation (3 annotators)
+│   ├── step7_v4.py                     # Step 5: human study validation (3 annotators)
+│   └── step18_transfer_probe.py        # Step 11: pipeline transfer probe (non-medical corpus)
 ├── analysis/
 │   ├── step10_gpt4o.py                 # main results (Section 6, Table 7)
 │   ├── step11_v4.py                    # weight ablation (Appendix B, 171 combinations)
 │   ├── step13_v4.py                    # curriculum concept graph construction
-│   └── step14_v4.py                    # graph topology + centrality analysis (Section 5)
+│   ├── step14_v4.py                    # graph topology + centrality analysis (Section 5)
+│   ├── step15_recall_perturbation.py   # Step 9: extraction-recall drop sweep
+│   ├── step16_multi_judge_agreement.py # Step 5b: GPT-4o vs Claude judge agreement
+│   └── step17_judge_bias_ablation.py   # Step 10: judge-family OLS bias ablation
 ├── finetuning/
 │   └── step12_eval_claims_v4.py        # LoRA fine-tuning + evaluation (Section 7)
+├── paper/
+│   ├── make_fig1.py                    # Figure 1 source (matplotlib)
+│   ├── medlecturebench_fig_1.png       # Figure 1 raster (300 dpi)
+│   ├── medlecturebench_fig_1.pdf       # Figure 1 vector
+│   ├── medlecturebench_fig_1.svg       # Figure 1 raw editable (Inkscape/Illustrator)
+│   └── neurips_2024.pdf                # Compiled paper (22 pages)
+├── results/
+│   ├── multi_judge_agreement.json      # per-model r, MAD, ensemble IGS + Kendall τ
+│   ├── recall_perturbation_results.json# 10/20/30 % recall drop → ρ̄, max flip
+│   └── judge_bias_ablation.json        # OLS β_C vs β_N per model
 ├── requirements.txt
 ├── environment.yml
 └── README.md
@@ -96,9 +131,11 @@ zabir1996/mip-bench/
 ├── Lectures/                ← slide images (.JPG) + aligned narration (.txt), 23 lectures
 ├── claims_v5/               ← GPT-4o extracted concept graphs, one JSON per slide (1,117 total)
 ├── igs_scores_gpt4o_v5/     ← GPT-4o judge IGS scores for all five evaluated VLMs
+├── igs_scores_claude_v5/    ← Claude (opus-4-6) judge IGS scores (5 models × 183 clean-test slides)
 ├── vlm_outputs/             ← VLM zero-shot free-form responses for all five models
 ├── concept_graphs/          ← curriculum knowledge graph (3,712 nodes, 12,419 edges)
 ├── human_study_v4/          ← human annotation scores (3 annotators, 50 stratified slides)
+├── robustness/              ← multi-judge agreement, recall perturbation, judge-bias OLS (3 JSON)
 └── splits/
     ├── train.json            ← 724-slide training split
     ├── val.json              ← 182-slide validation split
@@ -138,6 +175,12 @@ Set your OpenAI API key (required for Steps 1 and 3 only):
 export OPENAI_API_KEY="sk-..."
 ```
 
+Set your Anthropic API key (required only for Step 3b — Claude judge replication):
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+```
+
 ---
 
 ## Dataset Download
@@ -168,6 +211,16 @@ huggingface-cli download zabir1996/mip-bench \
     --repo-type dataset --local-dir ./medlecture_bench \
     --include "igs_scores_gpt4o_v5/*"
 
+# Claude-judge IGS scores (multi-judge replication)
+huggingface-cli download zabir1996/mip-bench \
+    --repo-type dataset --local-dir ./medlecture_bench \
+    --include "igs_scores_claude_v5/*"
+
+# Robustness probe outputs (multi-judge agreement, recall perturbation, judge bias)
+huggingface-cli download zabir1996/mip-bench \
+    --repo-type dataset --local-dir ./medlecture_bench \
+    --include "robustness/*"
+
 # Dataset splits only
 huggingface-cli download zabir1996/mip-bench \
     --repo-type dataset --local-dir ./medlecture_bench \
@@ -188,9 +241,11 @@ medlecture_bench/
 │   ├── L01_S001.json
 │   └── ...
 ├── igs_scores_gpt4o_v5/
+├── igs_scores_claude_v5/
 ├── vlm_outputs/
 ├── concept_graphs/
 ├── human_study_v4/
+├── robustness/
 └── splits/
     ├── train.json
     ├── val.json
@@ -288,6 +343,21 @@ Full judge prompt is reproduced in Appendix I of the paper.
 
 ---
 
+### Step 3b — Second LLM judge (Claude, non-OpenAI replication)
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+python evaluation/step5_claude_judge.py --model all --split test --resume
+```
+
+Identical rubric and anchor-snapping as Step 3, but served by Anthropic `claude-opus-4-6`.
+Writes per-model scores to `igs_scores_claude_v5/`. Used to defend against single-provider
+judge bias (paper §4.2, Appendix `sec:supp_multi_judge`).
+
+*Skip if you downloaded `igs_scores_claude_v5/` from Hugging Face.*
+
+---
+
 ### Step 4 — Baseline metrics
 
 ```bash
@@ -308,6 +378,20 @@ python analysis/step10_gpt4o.py
 
 Produces the main IGS results table (paper Table 7) and 95% bootstrap CIs (10,000 resamples).
 **No API key or GPU required** if `igs_scores_gpt4o_v5/` is downloaded.
+
+---
+
+### Step 5b — Multi-judge agreement (GPT-4o vs Claude)
+
+```bash
+python analysis/step16_multi_judge_agreement.py
+```
+
+Reads `igs_scores_gpt4o_v5/` and `igs_scores_claude_v5/` and emits per-model Pearson r,
+Spearman ρ, MAD, ensemble IGS with 10,000-resample 95 % CI, and the cross-judge Kendall τ
+over VLM rankings. Result: **Kendall τ = 1.0 (p = 0.017)**, r_IGS ∈ [0.694, 0.835], Claude
+uniformly ~0.05–0.09 IGS stricter than GPT-4o on level while preserving ordering. Output:
+`results/multi_judge_agreement.json`.
 
 ---
 
@@ -352,6 +436,42 @@ on a 50-slide stratified subset. Reproduces:
 Annotation protocol and rubrics are documented in Appendix H of the paper. Annotators were
 volunteer Ph.D. students at RPI; no compensation was provided. IRB Protocol #2321,
 Exempt under 45 CFR 46.101(b)(3), April 6, 2026.
+
+---
+
+### Step 9 — Recall-perturbation robustness sweep
+
+```bash
+python analysis/step15_recall_perturbation.py
+```
+
+Simulates 10 / 20 / 30 % gold-concept recall drop on the extraction pipeline and recomputes
+IGS and VLM rankings. Result: mean rank Spearman ρ̄ = 0.94, max flip = 1 (neighbour swap).
+Rankings are stable under imperfect extraction. Output: `results/recall_perturbation_results.json`.
+
+---
+
+### Step 10 — Judge-family bias ablation
+
+```bash
+python analysis/step17_judge_bias_ablation.py
+```
+
+OLS regression `IGS ~ β_C · Jaccard(ŷ, 𝓒) + β_N · Jaccard(ŷ, narration)` per model.
+Result: Δβ = β_C − β_N spans [−0.69, +0.63]; β_N matches β_C on average — the judge is
+**not** preferentially rewarding GPT-4o-extractor vocabulary. Output: `results/judge_bias_ablation.json`.
+
+---
+
+### Step 11 — Pipeline transfer probe
+
+```bash
+python evaluation/step18_transfer_probe.py --probe_dir /path/to/non_medical_corpus
+```
+
+Runs the extraction pipeline unchanged on a non-medical corpus (e.g., MIT OCW Fourier lecture).
+Existence proof only — no IGS is reported, since calibration of CR/RV/SF anchors is
+curriculum-specific. Produces `<C, R, B>` JSON per slide under the probe directory.
 
 ---
 
