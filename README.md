@@ -109,7 +109,7 @@ mip-bench/                              ← this GitHub repo (code only)
 │   ├── make_fig1.py                    # Figure 1 source (matplotlib)
 │   ├── medlecturebench_fig_1.png       # Figure 1 raster (300 dpi)
 │   ├── medlecturebench_fig_1.pdf       # Figure 1 vector
-│   ├── medlecturebench_fig_1.svg       # Figure 1 raw editable (Inkscape/Illustrator)
+│   ├── medlecturebench_fig_qual.pdf     
 │   └── neurips_2024.pdf                # Compiled paper (22 pages)
 ├── results/
 │   ├── multi_judge_agreement.json      # per-model r, MAD, ensemble IGS + Kendall τ
